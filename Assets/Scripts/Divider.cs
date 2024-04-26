@@ -1,37 +1,46 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Divider : MonoBehaviour
 {
     [SerializeField] private Unit _prefab;
     [SerializeField] private UnitFactory _factoryUnit;
+    [SerializeField] private Destruction _destruction;
+
+    [SerializeField] private float _radiusSphere;
 
     private int _minRandomCount = 2;
     private int _maxRandomCount = 6;
+    private float _maximumTurn = 360f;
 
     private void OnEnable()
     {
-        _prefab.Clicked += OnCliked;
+        _prefab.Splitting += OnSpliting;
     }
 
     private void OnDisable()
     {
-        _prefab.Clicked -= OnCliked;
+        _prefab.Splitting -= OnSpliting;
     }
 
-    private void OnCliked()
+    private void OnSpliting()
     {
+        List<Unit> units = new List<Unit>();
+
         int randomCount = Random.Range(_minRandomCount, _maxRandomCount);
 
-        if (_prefab.CanSplit())
+        for (int i = 0; i < randomCount; i++)
         {
-            for (int i = 0; i < randomCount; i++)
-                _factoryUnit.Create(_prefab.transform.position);
+            var position = CalculateRandomPosition(_prefab.transform.position, _radiusSphere);
+            units.Add(_factoryUnit.Create(position));
+        }
 
-            Destroy(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        _destruction.Explode(units);
     }
+
+    private Vector3 CalculateRandomPosition(Vector3 position, float radius) =>
+        CalculateRandomRotation() * Vector3.forward * radius + position;
+
+    private Quaternion CalculateRandomRotation() =>
+        Quaternion.Euler(0, Random.Range(0, _maximumTurn), 0);
 }
