@@ -10,13 +10,18 @@ public class Unit : MonoBehaviour
     private float _oddsDivider = 2f;
 
     private float _sizeReduction = 2f;
+    private float _radiusIncrease = 2f;
+    private float _forceIncrease = 2f;
 
     private Renderer _renderer;
     private Rigidbody _rigidbody;
 
     public event Action Splitting;
+    public event Action Obliterating;
 
     public float CurrentChance { get; private set; } = 100f;
+    public float CurrentRadiusDestruction { get; private set; } = 20f;
+    public float CurrentForceDestruction { get; private set; } = 300f;
     private bool CanSplit { get; set; } = true;
 
     private void Awake()
@@ -29,6 +34,8 @@ public class Unit : MonoBehaviour
     {
         if (CanSplit)
             Splitting?.Invoke();
+        else
+            Obliterating?.Invoke();
 
         Destroy(gameObject);
     }
@@ -36,14 +43,22 @@ public class Unit : MonoBehaviour
     public void AddExplosion(float force, Vector3 position, float radius) =>
         _rigidbody.AddExplosionForce(force, position, radius);
 
-    public void Initialize(float parentChance, Vector3 parentScale)
+    public void Initialize(float parentChance, Vector3 parentScale, float parentForce, float parentRadius)
     {
         SetChance(parentChance);
         SetColor(CreateRandomColor());
         SetSize(parentScale);
+        SetForceExtention(parentForce);
+        SetRadiusExtension(parentRadius);
 
         CanSplit = UnityEngine.Random.Range(_minChanceSplit, _maxChanceSplit) < CurrentChance;
     }
+
+    private void SetRadiusExtension(float parentRadius) =>
+        CurrentRadiusDestruction = parentRadius * _radiusIncrease;
+
+    private void SetForceExtention(float parentForce) =>
+        CurrentForceDestruction = parentForce * _forceIncrease;
 
     private void SetSize(Vector3 parentScale) =>
         transform.localScale = parentScale / _sizeReduction;

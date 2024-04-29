@@ -7,7 +7,10 @@ public class UnitFactory : MonoBehaviour
     public Unit Create(Vector3 position)
     {
         Unit unit = Instantiate(_prefab, position, Quaternion.identity);
-        unit.Initialize(_prefab.CurrentChance, _prefab.transform.localScale);
+        unit.Initialize(_prefab.CurrentChance,
+                        _prefab.transform.localScale,
+                        _prefab.CurrentForceDestruction,
+                        _prefab.CurrentRadiusDestruction);
 
         return unit;
     }
