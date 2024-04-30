@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Divider : MonoBehaviour
 {
-    [SerializeField] private Unit _prefab;
+    [SerializeField] private Unit _unit;
     [SerializeField] private UnitFactory _factoryUnit;
     [SerializeField] private Destruction _destruction;
 
@@ -15,12 +15,12 @@ public class Divider : MonoBehaviour
 
     private void OnEnable()
     {
-        _prefab.Splitting += OnSpliting;
+        _unit.Splitting += OnSpliting;
     }
 
     private void OnDisable()
     {
-        _prefab.Splitting -= OnSpliting;
+        _unit.Splitting -= OnSpliting;
     }
 
     private void OnSpliting()
@@ -31,7 +31,7 @@ public class Divider : MonoBehaviour
 
         for (int i = 0; i < randomCount; i++)
         {
-            var position = CalculateRandomPosition(_prefab.transform.position, _radiusSphere);
+            var position = CalculateRandomPosition(_unit.transform.position, _radiusSphere);
             units.Add(_factoryUnit.Create(position));
         }
 

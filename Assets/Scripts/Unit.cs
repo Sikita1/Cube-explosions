@@ -12,6 +12,8 @@ public class Unit : MonoBehaviour
     private float _sizeReduction = 2f;
     private float _radiusIncrease = 2f;
     private float _forceIncrease = 2f;
+    
+    private bool _canSplit = true;
 
     private Renderer _renderer;
     private Rigidbody _rigidbody;
@@ -22,7 +24,6 @@ public class Unit : MonoBehaviour
     public float CurrentChance { get; private set; } = 100f;
     public float CurrentRadiusDestruction { get; private set; } = 20f;
     public float CurrentForceDestruction { get; private set; } = 300f;
-    private bool CanSplit { get; set; } = true;
 
     private void Awake()
     {
@@ -32,7 +33,7 @@ public class Unit : MonoBehaviour
 
     public void Clicked()
     {
-        if (CanSplit)
+        if (_canSplit)
             Splitting?.Invoke();
         else
             Obliterating?.Invoke();
@@ -45,13 +46,13 @@ public class Unit : MonoBehaviour
 
     public void Initialize(float parentChance, Vector3 parentScale, float parentForce, float parentRadius)
     {
-        SetChance(parentChance);
+        TakeChance(parentChance);
         SetColor(CreateRandomColor());
         SetSize(parentScale);
         SetForceExtention(parentForce);
         SetRadiusExtension(parentRadius);
 
-        CanSplit = UnityEngine.Random.Range(_minChanceSplit, _maxChanceSplit) < CurrentChance;
+        _canSplit = UnityEngine.Random.Range(_minChanceSplit, _maxChanceSplit) < CurrentChance;
     }
 
     private void SetRadiusExtension(float parentRadius) =>
@@ -63,7 +64,7 @@ public class Unit : MonoBehaviour
     private void SetSize(Vector3 parentScale) =>
         transform.localScale = parentScale / _sizeReduction;
 
-    private void SetChance(float parentChance) =>
+    private void TakeChance(float parentChance) =>
         CurrentChance = parentChance / _oddsDivider;
 
 
